@@ -166,7 +166,6 @@ void SAT_mapper(string &file_name)
 void optimal_subgraph(string &file_name)
 {
     ifstream graph_file(file_name + ".graph");
-    ofstream input_file(file_name + ".satinput");
     int n, e, num;
     string line;
     // vector<vector<int>> graph;
@@ -189,6 +188,7 @@ void optimal_subgraph(string &file_name)
         graph_file.close();
         for (int k = 1; k <= n; k++)
         {
+            ofstream input_file(file_name + ".satinput");
             input_file << "p cnf " << n + (n + 1) * (k + 1) << " " << 4 * n * k + n + k + 2 + ((n) * (n - 1) / 2) - e << endl;
             // Adding Conctraints to check completeness
             for (int i = 0; i < n; i++)
@@ -230,13 +230,14 @@ void optimal_subgraph(string &file_name)
                            << var << ' ' << -(temp_n) << ' ' << -(var - (n + 2)) << ' ' << 0 << endl;
             }
             input_file << n + (n + 1) * (k + 1) << ' ' << 0;
+            input_file.close();
             string command = "minisat " + file_name + ".satinput " + file_name + ".satoutput";
             system(command.c_str());
             ifstream output_file(file_name + ".satoutput");
             getline(output_file, line);
             if (line == "SAT")
             {
-                ofstream mapper_file(file_name + ".mapper");
+                ofstream mapper_file(file_name + ".mapping");
                 mapper_file << "#1" << endl;
                 getline(output_file, line);
                 output_file.close();
