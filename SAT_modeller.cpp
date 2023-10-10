@@ -249,7 +249,7 @@ void optimal_subgraph(string &file_name)
                 for (int i = 0; i < n; i++)
                 {
                     iss >> num;
-                    if (num > 0 && !k)
+                    if (num > 0 && !control)
                     {
                         mapper_file << num;
                         control = 1;
