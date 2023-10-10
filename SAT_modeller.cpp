@@ -166,7 +166,7 @@ void SAT_mapper(string &file_name)
 void optimal_subgraph(string &file_name)
 {
     ifstream graph_file(file_name + ".graph");
-    int n, e, num;
+    int n, e, num,k;
     string line;
     // vector<vector<int>> graph;
 
@@ -186,8 +186,11 @@ void optimal_subgraph(string &file_name)
             graph[v2 - 1][v1 - 1] = 1;
         }
         graph_file.close();
-        for (int k = 1; k <= n; k++)
+        int left = 1, right = n;
+        while (left<=right)
         {
+            cout << "left: " << left << "\tright: "<<right<<endl; 
+            k = left + (right-left)/2;
             ofstream input_file(file_name + ".satinput");
             input_file << "p cnf " << n + (n + 1) * (k + 1) << " " << 4 * n * k + n + k + 2 + ((n) * (n - 1) / 2) - e << endl;
             // Adding Conctraints to check completeness
@@ -231,7 +234,7 @@ void optimal_subgraph(string &file_name)
             }
             input_file << n + (n + 1) * (k + 1) << ' ' << 0;
             input_file.close();
-            string command = "minisat " + file_name + ".satinput " + file_name + ".satoutput";
+            string command = "minisat " + file_name + ".satinput " + file_name + ".satoutput" + "> output.txt";
             system(command.c_str());
             ifstream output_file(file_name + ".satoutput");
             getline(output_file, line);
@@ -242,14 +245,14 @@ void optimal_subgraph(string &file_name)
                 getline(output_file, line);
                 output_file.close();
                 istringstream iss(line);
-                int k = 0;
+                int control = 0;
                 for (int i = 0; i < n; i++)
                 {
                     iss >> num;
                     if (num > 0 && !k)
                     {
                         mapper_file << num;
-                        k = 1;
+                        control = 1;
                     }
                     else if (num > 0)
                     {
@@ -257,11 +260,12 @@ void optimal_subgraph(string &file_name)
                     }
                 }
                 mapper_file.close();
+                left = k+1;
             }
             else
             {
                 input_file.close();
-                break;
+                right = k-1;
             }
         }
     }
