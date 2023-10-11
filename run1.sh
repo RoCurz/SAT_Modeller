@@ -1,0 +1,1 @@
+./SAT_modeller $1

@@ -1,0 +1,1 @@
+./SAT_optimal $1
